@@ -1,0 +1,8 @@
+: 1
+location: exe-compiler/
+:
+location: exe-consumer/
+:
+location: exe-generator/
+:
+location: module/

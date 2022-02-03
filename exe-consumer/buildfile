@@ -1,0 +1,7 @@
+# Use the module provided
+# Something like:
+
+import generator = exe-generator%exe{generator}
+
+./: manifest
+./: exe{consumer}: generator{main}: exe{generator}

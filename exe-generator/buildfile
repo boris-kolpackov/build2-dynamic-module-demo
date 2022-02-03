@@ -1,0 +1,2 @@
+./: manifest
+./: exe{generator}: cxx{main}
