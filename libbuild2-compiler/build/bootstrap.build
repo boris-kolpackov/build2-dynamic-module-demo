@@ -1,4 +1,4 @@
-project = module
+project = libbuild2-compiler
 
 using version
 using config

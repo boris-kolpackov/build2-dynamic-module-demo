@@ -1,7 +1,0 @@
-: 1
-name: module
-version: 0.1.0-a.0.z
-summary: dynamic-module C++ executable
-license: other: proprietary ; Not free/open source.
-depends: * build2 >= 0.14.0
-depends: * bpkg >= 0.14.0

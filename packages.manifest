@@ -5,4 +5,4 @@ location: exe-consumer/
 :
 location: exe-generator/
 :
-location: module/
+location: libbuild2-compiler/
