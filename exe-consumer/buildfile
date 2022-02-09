@@ -1,9 +1,37 @@
+./: manifest
+
 # Use the module provided
 # Something like:
 
 using compiler
 
-import generator = exe-generator%exe{generator}
+import! generator = exe-generator%exe{generator}
 
-./: manifest
-#./: exe{consumer}: generator{main}: exe{generator}
+# When we try to compile cxx{main} we discover a generated header inclusion.
+# But at this point there may not be the target for this header yet (cxx{main}
+# and compiler.generated{main} are matched in parallel).
+#
+# There are two ways to resolve this: either put compiler.generated{main} into
+# a utility library (obje{main} will then depend on this library which means
+# things will be matched in the desired order) or add compiler.generated{main}
+# as an ad hoc prerequisite of obje{main}.
+#
+# (Of course, there is a third way which is to add a suitable rule to the
+# module, but that would require some way of predicting which headers belong
+# to which group; see the cli module for an example of this).
+#
+#./: exe{consumer}: cxx{main} compiler.generated{main}
+#compiler.generated{main}: $generator
+
+./: exe{consumer}: cxx{main} libue{main}
+libue{main}: compiler.generated{main}: $generator
+
+# Alternative way to achieve the same result without libue{}.
+#
+#./: exe{consumer}: obje{main} compiler.generated{main}
+#obje{main}: cxx{main}
+#obje{main}: compiler.generated{main}: include = adhoc
+
+exe{consumer}: test = true
+
+cxx.poptions += "-I$out_root" "-I$src_root"
