@@ -1,4 +1,4 @@
-# build2-dynamic-module-demo
+# build2-dynamic-target-group-demo
 
 This project contains a bunch of (hypothetical) source code generation tools
 and a build system module that demonstrate handling of dynamic target groups
