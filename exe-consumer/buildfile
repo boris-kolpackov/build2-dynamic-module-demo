@@ -1,15 +1,20 @@
 ./: manifest
 
-# Use the module provided
-# Something like:
-
 using compiler
 
 import! generator = exe-generator%exe{generator}
 
-# When we try to compile cxx{main} we discover a generated header inclusion.
-# But at this point there may not be the target for this header yet (cxx{main}
-# and compiler.generated{main} are matched in parallel).
+./: exe{consumer}: cxx{main} compiler.generated{main}
+compiler.generated{main}: $generator
+
+# The above setup relies on header pre-generation, see:
+#
+# https://github.com/build2/HOWTO/blob/master/entries/handle-auto-generated-headers.md
+#
+# If we were to disable pre-generation, then there are extra steps we will
+# need to take because when we try to match cxx{main} we discover a generated
+# header inclusion nut at this point there may not be the target for this
+# header yet (cxx{main} and compiler.generated{main} are matched in parallel).
 #
 # There are two ways to resolve this: either put compiler.generated{main} into
 # a utility library (obje{main} will then depend on this library which means
@@ -20,17 +25,25 @@ import! generator = exe-generator%exe{generator}
 # module, but that would require some way of predicting which headers belong
 # to which group; see the cli module for an example of this).
 #
-#./: exe{consumer}: cxx{main} compiler.generated{main}
-#compiler.generated{main}: $generator
 
-./: exe{consumer}: cxx{main} libue{main}
-libue{main}: compiler.generated{main}: $generator
+#./: exe{consumer}: cxx{main} libue{main}
+#libue{main}: compiler.generated{main}: update = execute
+#compiler.generated{main}: $generator
 
 # Alternative way to achieve the same result without libue{}.
 #
-#./: exe{consumer}: obje{main} compiler.generated{main}
+
+#./: exe{consumer}: obje{main}
+#exe{consumer}: compiler.generated{main}: update = execute
 #obje{main}: cxx{main}
 #obje{main}: compiler.generated{main}: include = adhoc
+
+# The generated source code can also be packages into a library with the
+# generated headers installed:
+#
+#./: exe{consumer}: cxx{main} lib{consumer}
+#./: lib{consumer}: compiler.generated{main}: $generator
+#hxx{*}: install = include/
 
 exe{consumer}: test = true
 
