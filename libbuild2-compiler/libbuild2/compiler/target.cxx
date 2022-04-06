@@ -43,7 +43,7 @@ namespace build2
       nullptr,
       nullptr,
       &target_search,
-      true // "See through" default iteration mode.
+      target_type::flag::see_through // Group with "see through" iteration.
     };
   }
 }
