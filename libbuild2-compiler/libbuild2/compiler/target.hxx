@@ -35,16 +35,17 @@ namespace build2
         members_on = ctx.current_on;
       }
 
-      using mtime_target::mtime_target;
+      generated (context& c, dir_path d, dir_path o, string n)
+          : mtime_target (c, move (d), move (o), move (n))
+      {
+        dynamic_type = &static_type;
+      }
 
       virtual group_view
       group_members (action) const override;
 
     public:
       static const target_type static_type;
-
-      virtual const target_type&
-      dynamic_type () const override {return static_type;}
     };
   }
 }
