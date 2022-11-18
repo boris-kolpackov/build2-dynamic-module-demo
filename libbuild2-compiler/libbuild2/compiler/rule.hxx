@@ -22,7 +22,7 @@ namespace build2
     {
     public:
       compile_rule (data&& d)
-          : data (move (d)), rule_id ("compiler.compile 1") {}
+          : data (move (d)), rule_id_ ("compiler.compile 1") {}
 
       virtual bool
       match (action, target&) const override;
@@ -40,7 +40,7 @@ namespace build2
       perform_clean (action, const target&) const;
 
     private:
-      const char* rule_id;
+      const char* rule_id_;
     };
   }
 }

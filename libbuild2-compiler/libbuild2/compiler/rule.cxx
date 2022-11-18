@@ -43,6 +43,8 @@ namespace build2
     {
       tracer trace ("compiler::compile_rule::apply");
 
+      context& ctx (xt.ctx);
+
       auto& g (xt.as<generated> ());
       const scope& bs (g.base_scope ());
 
@@ -96,7 +98,7 @@ namespace build2
 
         // First should come the rule name/version.
         //
-        if (dd.expect (rule_id) != nullptr)
+        if (dd.expect (rule_id_) != nullptr)
           l4 ([&]{trace << "rule mismatch forcing update of " << g;});
 
         // Then the compiler checksum.
@@ -180,6 +182,8 @@ namespace build2
 
         if (u)
         {
+          diag_buffer dbuf (ctx);
+
           // Run the generator to get a "cookie".
           //
           if (skip == 0)
@@ -190,10 +194,16 @@ namespace build2
             if (verb >= 2)
               print_process (args);
             else if (verb)
-              text << "generator";
+            {
+              // Note: probably would not be shown at level 1 in a real rule.
+              //
+              print_diag ("generator", path_name ("-") /* stdout */);
+            }
 
             cookie = run<string> (
-              pp, args.data (),
+              dbuf,
+              pp, args,
+              1 /* finish_verbosity */,
               [] (string& line, bool) {return move (line);});
 
             dd.write (cookie);
@@ -215,10 +225,18 @@ namespace build2
             if (verb >= 2)
               print_process (args);
             else if (verb)
-              text << "compiler --list-source-files " << cookie;
+            {
+              // Note: probably would not be shown at level 1 in a real rule.
+              //
+              print_diag ("compiler --list-source-files",
+                          cookie,
+                          path_name ("-") /* stdout */);
+            }
 
             files = run<vector<string>> (
-              pp, args.data (),
+              dbuf,
+              pp, args,
+              1 /* finish_verbosity */,
               [r = vector<string> ()] (string& line, bool last) mutable
               {
                 r.push_back (move (line));
@@ -328,7 +346,7 @@ namespace build2
           if (!read ()) // Rule id.
             break;
 
-          if (*l != rule_id)
+          if (*l != rule_id_)
             fail << "unable to clean target " << g << " with old depdb";
 
           if (!read ()) // Compiler checksum.
@@ -440,7 +458,7 @@ namespace build2
       if (verb >= 2)
         print_process (args);
       else if (verb)
-        text << "compiler " << cookie;
+        print_diag ("compiler", cookie, g);
 
       timestamp start;
       if (!ctx.dry_run)
@@ -449,7 +467,7 @@ namespace build2
           ? system_clock::now ()
           : timestamp_unknown;
 
-        run (pp, args);
+        run (ctx, pp, args, 1 /* finish_verbosity */);
       }
 
       timestamp now (system_clock::now ());
