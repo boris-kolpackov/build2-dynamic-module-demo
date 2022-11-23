@@ -182,8 +182,6 @@ namespace build2
 
         if (u)
         {
-          diag_buffer dbuf (ctx);
-
           // Run the generator to get a "cookie".
           //
           if (skip == 0)
@@ -201,7 +199,7 @@ namespace build2
             }
 
             cookie = run<string> (
-              dbuf,
+              ctx,
               pp, args,
               1 /* finish_verbosity */,
               [] (string& line, bool) {return move (line);});
@@ -234,7 +232,7 @@ namespace build2
             }
 
             files = run<vector<string>> (
-              dbuf,
+              ctx,
               pp, args,
               1 /* finish_verbosity */,
               [r = vector<string> ()] (string& line, bool last) mutable
