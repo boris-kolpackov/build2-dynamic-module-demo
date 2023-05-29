@@ -45,6 +45,15 @@ namespace build2
 
       context& ctx (xt.ctx);
 
+      // Handle matching group members.
+      //
+      if (const target* g = xt.group)
+      {
+        assert (g->is_a<generated> ());
+        match_sync (a, *g);
+        return group_recipe; // Execute the group's recipe.
+      }
+
       auto& g (xt.as<generated> ());
       const scope& bs (g.base_scope ());
 

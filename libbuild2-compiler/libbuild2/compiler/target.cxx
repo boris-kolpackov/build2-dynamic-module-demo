@@ -43,7 +43,10 @@ namespace build2
       nullptr,
       nullptr,
       &target_search,
-      target_type::flag::see_through // Group with "see through" iteration.
+      //
+      // Group with the "see through" iteration and dynamic members.
+      //
+      target_type::flag::see_through | target_type::flag::dyn_members
     };
   }
 }
