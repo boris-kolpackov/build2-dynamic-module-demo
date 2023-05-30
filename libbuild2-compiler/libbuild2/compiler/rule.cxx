@@ -83,8 +83,8 @@ namespace build2
 
         g.members.push_back (
           generated_pair {
-            &inject_group_member<cxx::hxx> (a, bs, g, g.dir / hp),
-            &inject_group_member<cxx::cxx> (a, bs, g, g.dir / cp)});
+            &inject_group_member<cxx::hxx> (a, bs, g, g.dir / hp).first,
+            &inject_group_member<cxx::cxx> (a, bs, g, g.dir / cp).first});
       };
 
       if (a == perform_update_id)
