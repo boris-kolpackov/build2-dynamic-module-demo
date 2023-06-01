@@ -89,6 +89,16 @@ namespace build2
 
       if (a == perform_update_id)
       {
+        // Note that if the set of dynamic targets can change based on changes
+        // to the inputs (say, each entity, such as a type, in the input file
+        // gets its own output file), then, by performing subsequent updates,
+        // we can end up with a large number of old output files laying around
+        // because they are not part of the new dynamic target set. So we may
+        // want to try to clean them up based on the old depdb information,
+        // similar to how we do it for perform_clean below. This is left as an
+        // exercise for the reader (adhoc_buildscript_rule in libbuild2 does
+        // that).
+
         // Make sure the output directory exists.
         //
         if (dir != nullptr)
