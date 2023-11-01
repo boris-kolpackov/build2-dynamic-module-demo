@@ -102,7 +102,7 @@ namespace build2
         // Make sure the output directory exists.
         //
         if (dir != nullptr)
-          fsdir_rule::perform_update_direct (a, g);
+          fsdir_rule::perform_update_direct (a, *dir);
 
         // See generated::group_members().
         //
